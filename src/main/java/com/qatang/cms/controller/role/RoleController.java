@@ -39,8 +39,8 @@ public class RoleController extends BaseController {
 
     @Autowired
     private IValidator<RoleForm> createRoleValidator;
-	@Autowired
-	private IValidator<RoleForm> queryRoleValidator;
+    @Autowired
+    private IValidator<RoleForm> queryRoleValidator;
     @Autowired
     private RoleService roleService;
 
@@ -56,9 +56,9 @@ public class RoleController extends BaseController {
         return "role/list";
     }
 
-	@RequiresPermissions("sys:role:list")
-	@RequestMapping(value = "/list", method = RequestMethod.POST)
-	public String list(RoleForm roleForm, ModelMap modelMap, HttpServletRequest request) {
+    @RequiresPermissions("sys:role:list")
+    @RequestMapping(value = "/list", method = RequestMethod.POST)
+    public String list(RoleForm roleForm, ModelMap modelMap, HttpServletRequest request) {
         try {
             queryRoleValidator.validate(roleForm);
         } catch (ValidateFailedException e) {
@@ -69,7 +69,7 @@ public class RoleController extends BaseController {
         pagination(roleForm, modelMap);
         roleForm.setPageString(PageUtil.getPageString(request, roleForm.getPageInfo()));
         return "role/list";
-	}
+    }
 
     @RequiresPermissions("sys:role:create")
     @RequestMapping(value = "/create", method = RequestMethod.GET)
@@ -89,12 +89,9 @@ public class RoleController extends BaseController {
             createRoleValidator.validate(roleForm);
         } catch (ValidateFailedException e) {
             logger.error(e.getMessage());
-            if (roleForm != null && roleForm.getId() != null) {
-                roleForm.setId(null);
-            }
             redirectAttributes.addFlashAttribute(ERROR_MESSAGE_KEY, e.getMessage());
             redirectAttributes.addFlashAttribute(roleForm);
-            return "redirect:/role/input";
+            return "redirect:/role/create";
         }
         Role role = new Role();
         role.setName(roleForm.getName());
@@ -145,7 +142,7 @@ public class RoleController extends BaseController {
             logger.error(e.getMessage());
             redirectAttributes.addFlashAttribute(ERROR_MESSAGE_KEY, e.getMessage());
             modelMap.addAttribute(roleForm);
-            return "/role/input";
+            return "redirect:/role/update/" + roleForm.getId();
         }
         Role role = roleService.getRole(Long.parseLong(roleForm.getId()));
         if (role == null) {
@@ -164,7 +161,7 @@ public class RoleController extends BaseController {
 
     @RequiresPermissions("sys:role:detail")
     @RequestMapping(value = "/detail/{roleId}", method = RequestMethod.GET)
-    public String view(@PathVariable String roleId, ModelMap modelMap) {
+    public String detail(@PathVariable String roleId, ModelMap modelMap) {
         RoleForm roleForm = new RoleForm();
         roleForm.setId(roleId);
         try {
@@ -177,7 +174,7 @@ public class RoleController extends BaseController {
         Role role = roleService.getRole(Long.parseLong(roleId));
         modelMap.addAttribute(role);
         modelMap.addAttribute(FORWARD_URL, "/role/list");
-        return "role/view";
+        return "role/detail";
     }
 
     @RequiresPermissions("sys:role:switchStatus")

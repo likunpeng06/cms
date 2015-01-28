@@ -21,6 +21,22 @@ public class QueryRoleValidator extends AbstractValidator<RoleForm> {
             logger.error(msg);
             throw new ValidateFailedException(msg);
         }
+        if (StringUtils.isNotEmpty(roleForm.getIsDefault())) {
+            int isDefault;
+            try {
+                isDefault = Integer.valueOf(roleForm.getIsDefault());
+            } catch (Exception e) {
+                String msg = String.format("是否默认角色状态字段格式不合法");
+                logger.error(msg);
+                throw new ValidateFailedException(msg);
+            }
+            YesNoStatus yesNoStatus = YesNoStatus.get(isDefault);
+            if (yesNoStatus == null) {
+                String msg = String.format("是否默认角色状态字段格式不合法");
+                logger.error(msg);
+                throw new ValidateFailedException(msg);
+            }
+        }
         if (StringUtils.isNotEmpty(roleForm.getValid())) {
             int valid;
             try {
@@ -36,22 +52,6 @@ public class QueryRoleValidator extends AbstractValidator<RoleForm> {
 		        logger.error(msg);
 		        throw new ValidateFailedException(msg);
 	        }
-        }
-        if (StringUtils.isNotEmpty(roleForm.getIsDefault())) {
-            int isDefault;
-            try {
-	            isDefault = Integer.valueOf(roleForm.getIsDefault());
-            } catch (Exception e) {
-                String msg = String.format("是否默认角色状态字段格式不合法");
-                logger.error(msg);
-                throw new ValidateFailedException(msg);
-            }
-            YesNoStatus yesNoStatus = YesNoStatus.get(isDefault);
-            if (yesNoStatus == null) {
-                String msg = String.format("是否默认角色状态字段格式不合法");
-                logger.error(msg);
-                throw new ValidateFailedException(msg);
-            }
         }
         return true;
     }
